@@ -3,18 +3,9 @@
 -export([ parse_transform/2
         ]).
 
--include("emark_internal.hrl").
-
 parse_transform(Forms, Options) ->
-  Suffix = proplists:get_value(emark_fun_suffix, Options, ?DEFAULT_FUN_SUFFIX),
-
-  Exports = lists:foldl(fun({ attribute, _, export, ExList }, Accu) ->
-                            sets:union(sets:from_list(ExList), Accu);
-                           (_, Accu) ->
-                            Accu
-                        end,
-                        sets:new(),
-                        Forms),
+  Suffix = emark_utils:fun_suffix(Options),
+  Exports = emark_utils:exports_of_forms(Forms),
 
   F = fun({ function, _, Name, 0, _ } = Form, Accu) ->
           NameList = atom_to_list(Name),
