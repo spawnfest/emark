@@ -1,6 +1,6 @@
 %% -*- erlang -*-
 
-{ application, emark_plugin,
+{ application, emark,
   [ { description, ""    }
   , { vsn,         "0.1" }
   , { registered,  []    }
