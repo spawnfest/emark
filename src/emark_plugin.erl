@@ -1,6 +1,7 @@
 -module(emark_plugin).
 
 -export([ emark/2
+        , clean/2
         ]).
 
 -define(EMARK_DIR, ".emark").
@@ -24,6 +25,9 @@ emark(Config, _AppFile) ->
                         SrcDirs),
 
   rebar_erlc_compiler:doterl_compile(emark_config(Config), ?EMARK_DIR, SrcErls).
+
+clean(_Config, _File) ->
+  rebar_file_utils:rm_rf(?EMARK_DIR).
 
 %===============================================================================
 
