@@ -1,0 +1,23 @@
+%% -*- erlang -*-
+
+{ application, emark_plugin,
+  [ { description, ""    }
+  , { vsn,         "0.1" }
+  , { registered,  []    }
+  , { applications
+    , [ kernel
+      , stdlib
+      ]
+    }
+  , { mod
+    , { emark_plugin
+      , []
+      }
+    }
+  , { env, [] }
+  ]
+}.
+
+%%% Local Variables:
+%%% erlang-indent-level: 2
+%%% End:
