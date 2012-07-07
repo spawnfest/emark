@@ -1,0 +1,17 @@
+%% -*- erlang -*-
+
+{ application,
+  bench0,
+  [ { description,  "emark usage example" }
+  , { vsn,          "0.1"                 }
+  , { modules,      [ bench0
+                    ]
+    }
+  , { registered,   [] }
+  , { applications, [] }
+  , { start_phases, [] }
+ ]}.
+
+%%% Local Variables:
+%%% erlang-indent-level: 2
+%%% End:
