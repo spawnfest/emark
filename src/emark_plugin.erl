@@ -92,9 +92,11 @@ trace_loop(B, N, MFA) ->
           Average = Time / Count,
           %% woooo.... holy crap X___x
           %% yeah, put some cool stuff here later
-          NeedCount = trunc((?BENCH_DEFAULT_TIME * 1.1) / Average),
+          NeedCount = emark_utils:ceil((?BENCH_DEFAULT_TIME * 1.1) / Average),
           %% restart the benchmark
-          rebar_log:log(debug, "restaring the benchmark~n", []),
+          rebar_log:log(debug,
+                        "restaring the benchmark with ~p iterations~n",
+                        [ NeedCount ]),
           trace(B, NeedCount);
 
         _ ->
