@@ -1,3 +1,5 @@
+%% @doc Report generation, loading and diff.
+
 -module(emark_report).
 
 -export([ from_file/1
@@ -6,6 +8,7 @@
         , show_diff/2
         ]).
 
+%% @doc Load report from a file.
 from_file(Filename) ->
   try
     { ok, Data } = file:read_file(Filename),
@@ -32,12 +35,15 @@ from_file(Filename) ->
       { error, failed }
   end.
 
+%% @doc Save report to a file.
 to_file(Report, Filename) ->
   file:write_file(Filename, to_string(Report)).
 
+%% @doc Dump report to stdout.
 to_stdout(Report) ->
   io:format("~s", [ to_string(Report) ]).
 
+%% @doc Convert report into a readable form.
 to_string(Report) ->
   F = fun({ Func, Arity, Count, Average }) ->
           io_lib:format("~p/~p\t~p\t~.1f µs/op~n",
@@ -46,6 +52,7 @@ to_string(Report) ->
 
   lists:flatmap(F, Report).
 
+%% @doc Dump difference between two reports to stdout.
 show_diff(Old0, New0) ->
   Old = lists:sort(Old0),
   New = lists:sort(New0),
