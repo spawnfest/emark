@@ -1,3 +1,5 @@
+%% Internal definitions, mainly default options.
+
 -ifndef(EMARK_INTERNAL_HRL).
 -define(EMARK_INTERNAL_HRL, awww_yeah).
 
