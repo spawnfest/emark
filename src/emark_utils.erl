@@ -8,7 +8,7 @@
 -include("emark_internal.hrl").
 
 exports_of_forms(Forms) ->
-  exports_of_forms(no_autoexport).
+  exports_of_forms(Forms, no_autoexport).
 
 exports_of_forms(Forms, Suffix) ->
   lists:foldl(fun({ attribute, _, export, ExList }, Accu) ->
