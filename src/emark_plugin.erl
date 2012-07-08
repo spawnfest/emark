@@ -87,7 +87,7 @@ trace_loop(B, N, MFA) ->
       case Time of
         X when X < ?BENCH_DEFAULT_TIME ->
           %% if it's less, we should try a better number of iterations
-          rebar_log:log(debug, "not enough time (~pμs vs ~pμs)~n",
+          rebar_log:log(debug, "not enough time (~p ms vs ~p ms)~n",
                         [ trunc(X / 1000), trunc(?BENCH_DEFAULT_TIME / 1000) ]),
           Average = Time / Count,
           %% woooo.... holy crap X___x
