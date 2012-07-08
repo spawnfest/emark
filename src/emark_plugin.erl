@@ -4,7 +4,7 @@
         , clean/2
         ]).
 
--define(EMARK_DIR, ".emark").
+-include("emark_internal.hrl").
 
 emark(Config, _AppFile) ->
   %% ensure ?EMARK_DIR and ebin dirs exist

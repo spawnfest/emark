@@ -1,6 +1,9 @@
 -ifndef(EMARK_INTERNAL_HRL).
 -define(EMARK_INTERNAL_HRL, awww_yeah).
 
+%% default emark work dir
+-define(EMARK_DIR, ".emark").
+
 %% suffix which a func need to have in order to be benchmarked
 -define(DEFAULT_FUN_SUFFIX, "_benchmark").
 
