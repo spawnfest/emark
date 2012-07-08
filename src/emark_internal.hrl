@@ -16,4 +16,7 @@
 %% default benchmark time -- 1 second
 -define(BENCH_DEFAULT_TIME, 1000000).
 
+%% report to stdout by default
+-define(BENCH_DEFAULT_REPORT_STDOUT, true).
+
 -endif. % !EMARK_INTERNAL_HRL

@@ -109,8 +109,6 @@ trace_loop(B, N, MFA) ->
 
 run_func(_M, B, N) ->
   { { _Mod, Func, Arity }, Count, Time } = trace(B, N),
-  io:format("~p/~p\t~p\t~.1f µs/op~n",
-            [ Func, Arity, Count, Time/Count ]),
   { Func, Arity, Count, Time/Count }.
 
 benchmark(Modules, EmarkOpts) ->
@@ -163,6 +161,14 @@ perform_benchmark(Config, Modules) ->
 
   EmarkOpts = get_emark_opts(Config),
   EmarkResult = benchmark(Modules, EmarkOpts),
+
+  %% dump to stdout
+  case proplists:get_value(report_stdout,
+                           EmarkOpts,
+                           ?BENCH_DEFAULT_REPORT_STDOUT) of
+    true  -> emark_report:to_stdout(EmarkResult);
+    false -> ok
+  end,
 
   ok = file:set_cwd(Cwd),
   EmarkResult.
