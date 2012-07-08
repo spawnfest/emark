@@ -11,6 +11,9 @@
 -define(BENCH_FUN_ARITY, 1).
 
 %% default number of iterations per function
--define(BENCH_DEFAULT_N, 1000).
+-define(BENCH_DEFAULT_N, 10).
+
+%% default benchmark time -- 1 second
+-define(BENCH_DEFAULT_TIME, 1000000).
 
 -endif. % !EMARK_INTERNAL_HRL

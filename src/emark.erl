@@ -5,13 +5,14 @@
         ]).
 
 start({ _M, _F, _A } = MFA) ->
+  %% send the MFA so the tracer process can match on it later
+  self() ! { function, MFA },
   %% call      -- trace calls
   %% return_to -- trace actual return from a call
-  %% arity     -- trace as { M, F, Arity } instead of { M, F, Args }
-  X = erlang:trace(self(), true, [ call, return_to, arity ]),
-  Y = erlang:trace_pattern(MFA, true, [ local, call_count, call_time ]),
-  case X + Y of
-    N when N > 1 ->
+  Ok = ((erlang:trace(existing, true, [ call, return_to ]) > 0)
+        and (erlang:trace_pattern(MFA, true, [ local, call_count ]) > 0)),
+  case Ok of
+    true ->
       ok;
     _ ->
       throw(trace_failed)

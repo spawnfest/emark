@@ -54,17 +54,73 @@ clean(_Config, _File) ->
 
 %===============================================================================
 
+get_call_count(MFA) ->
+  { call_count, Count } = erlang:trace_info(MFA, call_count),
+  Count.
+
+trace(B, N) ->
+  Self = self(),
+  spawn(fun() ->
+            %% get the time it takes to run
+            { Time, _ } = timer:tc(B, [ N ]),
+            %% stop tracing
+            erlang:trace(all, false, [ all ]),
+            %% send the MFA we were benchmarking
+            receive
+              MFA = { function, { _, _, _ } } ->
+                Self ! MFA
+            end,
+            %% send the time to trace_loop
+            Self ! { finished, Time }
+        end),
+  trace_loop(B, N, undefined).
+
+trace_loop(B, N, MFA) ->
+  receive
+    { function, NewMFA } ->
+      trace_loop(B, N, NewMFA);
+
+    { finished, Time } ->
+      rebar_log:log(debug, "finished benchmark~n", []),
+      Count = get_call_count(MFA),
+
+      case Time of
+        X when X < ?BENCH_DEFAULT_TIME ->
+          %% if it's less, we should try a better number of iterations
+          rebar_log:log(debug, "not enough time (~pms vs ~pms)~n",
+                        [ trunc(X / 1000), trunc(?BENCH_DEFAULT_TIME / 1000) ]),
+          Average = Time / Count,
+          %% woooo.... holy crap X___x
+          %% yeah, put some cool stuff here later
+          NeedCount = trunc((?BENCH_DEFAULT_TIME * 1.1) / Average),
+          %% restart the benchmark
+          rebar_log:log(debug, "restaring the benchmark~n", []),
+          trace(B, NeedCount);
+
+        _ ->
+          { Count, Time }
+      end;
+
+    _ ->
+      trace_loop(B, N, MFA)
+  end.
+
+run_func(M, B, N) ->
+  { Count, Time } = trace(B, N),
+  rebar_log:log(info,
+                "Results of ~p~n"
+                "number of calls: ~p~n"
+                "time it took: ~p microseconds~n"
+                "average: ~p microseconds/call~n",
+                [ M, Count, Time, trunc(Time/Count) ]).
+
 benchmark(Modules, EmarkOpts) ->
   N = proplists:get_value(emark_n, EmarkOpts, ?BENCH_DEFAULT_N),
-
-  RunFunc = fun(B) ->
-                B
-            end,
 
   RunModule = fun(M) ->
                   rebar_log:log(info, "Benchmarking ~p, ~p iterations~n", [ M, N ]),
                   lists:foreach(fun(B) ->
-                                    RunFunc(B)
+                                    run_func(M, B, N)
                                 end,
                                 M:benchmark()),
                   ok
