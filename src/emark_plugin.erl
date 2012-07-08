@@ -25,6 +25,18 @@ emark(Config, _AppFile) ->
                         [],
                         SrcDirs),
 
+  ToCleanUp = fun(F, Accu) ->
+                  F2 = filename:basename(F),
+                  F3 = filename:join([ ?EMARK_DIR, F2 ]),
+                  case filelib:is_regular(F3) of
+                    true  -> [ F3 | Accu ];
+                    false -> Accu
+                  end
+              end,
+
+  ok = rebar_file_utils:delete_each(lists:foldl(ToCleanUp, [], SrcErls)),
+  ok = rebar_file_utils:cp_r(SrcErls, ?EMARK_DIR),
+
   %% compile with -DBENCHMARK
   rebar_erlc_compiler:doterl_compile(emark_config(Config), ?EMARK_DIR, SrcErls),
 
