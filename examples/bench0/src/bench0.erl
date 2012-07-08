@@ -15,7 +15,7 @@ calc_something() ->
 -ifdef(BENCHMARK).
 
 calc_something_benchmark(N) ->
-  F = fun(F, 0) ->
+  F = fun(_F, 0) ->
           ok;
           (F, X) ->
           _ = calc_something(),
