@@ -10,4 +10,7 @@
 %% arity of benchmarking functions
 -define(BENCH_FUN_ARITY, 1).
 
+%% default number of iterations per function
+-define(BENCH_DEFAULT_N, 1000).
+
 -endif. % !EMARK_INTERNAL_HRL

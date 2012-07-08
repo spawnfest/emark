@@ -54,7 +54,33 @@ clean(_Config, _File) ->
 
 %===============================================================================
 
-benchmark(_Modules, _EmarkOpts) ->
+benchmark(Modules, EmarkOpts) ->
+  N = proplists:get_value(emark_n, EmarkOpts, ?BENCH_DEFAULT_N),
+
+  RunFunc = fun(B) ->
+                B
+            end,
+
+  RunModule = fun(M) ->
+                  rebar_log:log(info, "Benchmarking ~p, ~p iterations~n", [ M, N ]),
+                  lists:foreach(fun(B) ->
+                                    RunFunc(B)
+                                end,
+                                M:benchmark()),
+                  ok
+              end,
+
+  F = fun(M) ->
+          { module, M } = code:load_file(M),
+          case erlang:function_exported(M, benchmark, 0) of
+            true ->
+              RunModule(M);
+            false ->
+              ok
+          end
+      end,
+
+  lists:foreach(F, Modules),
   ok.
 
 ebin_dir() ->
