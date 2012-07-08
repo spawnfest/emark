@@ -2,3 +2,4 @@ ebin
 .emark
 .eunit
 deps
+erl_crash.dump
