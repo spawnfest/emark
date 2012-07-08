@@ -57,9 +57,7 @@ show_diff(Old0, New0) ->
   Old = lists:sort(Old0),
   New = lists:sort(New0),
 
-  Delta = fun(X0, Y0) ->
-              X = trunc(X0 * 10.0) / 10.0,
-              Y = trunc(Y0 * 10.0) / 10.0,
+  Delta = fun(X, Y) ->
               Diff = 100 * (1.0 - (X / Y)),
               io_lib:format(case X > Y of
                               true  -> "~.2f%";
@@ -69,9 +67,11 @@ show_diff(Old0, New0) ->
           end,
 
   Cmp = fun({ F, A, _OldC, OldT }, { F, A, _NewC, NewT }) ->
+            X = trunc(OldT * 10.0) / 10.0,
+            Y = trunc(NewT * 10.0) / 10.0,
             Func = lists:flatten(io_lib:format("~p/~B", [ F, A ])),
             io:format("~-30s\t~10.1f\t~10.1f\t~8s~n",
-                      [ Func, OldT, NewT, Delta(OldT, NewT) ])
+                      [ Func, X, Y, Delta(X, Y) ])
         end,
 
   io:format("~-30s\t~11s\t~11s\t~8s~n",
