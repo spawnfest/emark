@@ -1,3 +1,5 @@
+%% @doc Rebar plugin interface.
+
 -module(emark_plugin).
 
 -export([ emark/2
@@ -54,10 +56,14 @@ clean(_Config, _File) ->
 
 %===============================================================================
 
+%% @doc Get the call count of a specific function.
 get_call_count(MFA) ->
   { call_count, Count } = erlang:trace_info(MFA, call_count),
   Count.
 
+%% @doc Run the benchmark function.
+%% It also sends the function MFA and time it took to execute
+%% back to the callee.
 trace(B, N) ->
   Self = self(),
   spawn(fun() ->
@@ -79,8 +85,12 @@ trace(B, N) ->
                 Self ! { finished, Time - timer:now_diff(StartReal, StartTime) }
             end
         end),
+
   trace_loop(B, N, undefined).
 
+%% @doc Benchmark callee.
+%% It executes the benchmark until the time it took is enough (?BENCH_DEFAULT_TIME)
+%% and number of iterations is meaningful.
 trace_loop(B, N, MFA) ->
   receive
     { function, NewMFA } ->
@@ -113,10 +123,12 @@ trace_loop(B, N, MFA) ->
       trace_loop(B, N, MFA)
   end.
 
+%% @doc Map benchmark to its results.
 run_func(_M, B, N) ->
   { { _Mod, Func, Arity }, Count, Time } = trace(B, N),
   { Func, Arity, Count, Time/Count }.
 
+%% @doc Benchmark a specific module.
 benchmark(Modules, EmarkOpts) ->
   N = proplists:get_value(n, EmarkOpts, ?BENCH_DEFAULT_N),
 
@@ -143,9 +155,11 @@ benchmark(Modules, EmarkOpts) ->
   lists:filter(fun(R) -> R /= ignore end,
                lists:flatmap(F, Modules)).
 
+%% @doc Ebin directory.
 ebin_dir() ->
   filename:join(rebar_utils:get_cwd(), "ebin").
 
+%% @doc Get emark-related arguments for compilation.
 emark_config(Config0) ->
   ErlOpts = rebar_config:get_list(Config0, erl_opts, []),
   EmarkOpts = rebar_config:get_list(Config0, emark_compile_opts, []),
@@ -155,12 +169,15 @@ emark_config(Config0) ->
   FirstErls = rebar_config:get_list(Config1, emark_first_files, []),
   rebar_config:set(Config1, erl_first_files, FirstErls).
 
+%% @doc Emark working dir.
 emark_dir() ->
   filename:join(rebar_utils:get_cwd(), ?EMARK_DIR).
 
+%% @doc Get emark-related options.
 get_emark_opts(Config) ->
   rebar_config:get_list(Config, emark_opts, []).
 
+%% @doc Run benchmark on modules and generate reports.
 perform_benchmark(Config, Modules) ->
   Cwd = rebar_utils:get_cwd(),
   ok = file:set_cwd(?EMARK_DIR),
