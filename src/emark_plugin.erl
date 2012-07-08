@@ -168,21 +168,22 @@ perform_benchmark(Config, Modules) ->
   EmarkOpts = get_emark_opts(Config),
   EmarkResult = benchmark(Modules, EmarkOpts),
 
+  [ ReportStdout
+  , Filename
+  , ShowDiff
+  ] = lists:map(fun({ Opt, Default }) ->
+                    proplists:get_value(Opt, EmarkOpts, Default)
+                end,
+                [ { report_stdout, ?BENCH_DEFAULT_REPORT_STDOUT }
+                , { report_file,   ?BENCH_DEFAULT_REPORT_FILE   }
+                , { show_diff,     ?BENCH_DEFAULT_SHOW_DIFF     }
+                ]),
+
   %% dump to stdout
-  case proplists:get_value(report_stdout,
-                           EmarkOpts,
-                           ?BENCH_DEFAULT_REPORT_STDOUT) of
+  case ReportStdout of
     true  -> emark_report:to_stdout(EmarkResult);
     false -> ok
   end,
-
-  Filename = proplists:get_value(report_file,
-                                 EmarkOpts,
-                                 ?BENCH_DEFAULT_REPORT_FILE),
-
-  ShowDiff = proplists:get_value(show_diff,
-                                 EmarkOpts,
-                                 ?BENCH_DEFAULT_SHOW_DIFF),
 
   case Filename of
     Filename when is_list(Filename) ->
