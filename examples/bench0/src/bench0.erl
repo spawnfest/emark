@@ -10,7 +10,19 @@ parse_omg_wtf(X) ->
 
 -ifdef(BENCHMARK).
 
-parse_omg_wtf_benchmark(_N) ->
+parse_omg_wtf_benchmark(N) ->
+  Input = lists:map(fun(_) ->
+                        crypto:rand_uniform(0, 16#ffffffff)
+                    end,
+                    lists:duplicate(N, 0)),
+
+  emark:start({ ?MODULE, parse_omg_wtf, 1 }),
+
+  lists:foreach(fun(X) ->
+                    _ = parse_omg_wtf(X)
+                end,
+                Input),
+
   ok.
 
 -endif.
