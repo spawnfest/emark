@@ -22,4 +22,7 @@
 %% default report filename
 -define(BENCH_DEFAULT_REPORT_FILE, "report.txt").
 
+%% show diff by default
+-define(BENCH_DEFAULT_SHOW_DIFF, true).
+
 -endif. % !EMARK_INTERNAL_HRL

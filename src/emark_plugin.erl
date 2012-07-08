@@ -135,7 +135,7 @@ benchmark(Modules, EmarkOpts) ->
       end,
 
   lists:filter(fun(R) -> R /= ignore end,
-               lists:map(F, Modules)).
+               lists:flatmap(F, Modules)).
 
 ebin_dir() ->
   filename:join(rebar_utils:get_cwd(), "ebin").
@@ -170,12 +170,25 @@ perform_benchmark(Config, Modules) ->
     false -> ok
   end,
 
-  %% dump to file
-  case proplists:get_value(report_file,
-                           EmarkOpts,
-                           ?BENCH_DEFAULT_REPORT_FILE) of
+  Filename = proplists:get_value(report_file,
+                                 EmarkOpts,
+                                 ?BENCH_DEFAULT_REPORT_FILE),
+
+  ShowDiff = proplists:get_value(show_diff,
+                                 EmarkOpts,
+                                 ?BENCH_DEFAULT_SHOW_DIFF),
+
+  case Filename of
     Filename when is_list(Filename) ->
-      emark_report:to_file(EmarkResult, Filename);
+      %% load previous report
+      Previous = emark_report:from_file(Filename),
+      %% dump to file
+      emark_report:to_file(EmarkResult, Filename),
+      %% dump diff
+      case ShowDiff of
+        true  -> io:format("~n"), emark_report:show_diff(Previous, EmarkResult);
+        false -> ok
+      end;
 
     false ->
       ok
