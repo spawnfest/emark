@@ -10,7 +10,7 @@ parse_omg_wtf(X) ->
 
 -ifdef(BENCHMARK).
 
-parse_omg_wtf_benchmark() ->
+parse_omg_wtf_benchmark(_N) ->
   ok.
 
 -endif.

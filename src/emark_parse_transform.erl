@@ -3,6 +3,8 @@
 -export([ parse_transform/2
         ]).
 
+-include("emark_internal.hrl").
+
 parse_transform(Forms, Options) ->
   Suffix = emark_utils:fun_suffix(Options),
   Exports = emark_utils:exports_of_forms(Forms, Suffix),
@@ -27,10 +29,10 @@ module_decl({ attribute, _, module, Module } = M,
             Suffix) ->
   module_autoexport(Module, M, Forms, Exports, Suffix).
 
-funcs_cons([ { Func, 0 } | Funcs ]) ->
+funcs_cons([ { Func, ?BENCH_FUN_ARITY } | Funcs ]) ->
   { cons, 0
   , { 'fun', 0
-    , { function, Func, 0 }
+    , { function, Func, ?BENCH_FUN_ARITY }
     }
   , funcs_cons(Funcs)
   };
