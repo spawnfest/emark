@@ -114,7 +114,7 @@ run_func(_M, B, N) ->
   { Func, Arity, Count, Time/Count }.
 
 benchmark(Modules, EmarkOpts) ->
-  N = proplists:get_value(emark_n, EmarkOpts, ?BENCH_DEFAULT_N),
+  N = proplists:get_value(n, EmarkOpts, ?BENCH_DEFAULT_N),
 
   RunModule = fun(M) ->
                   rebar_log:log(debug,
