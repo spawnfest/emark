@@ -14,7 +14,7 @@ exports_of_forms(Forms, Suffix) ->
   lists:foldl(fun({ attribute, _, export, ExList }, Accu) ->
                   sets:union(sets:from_list(ExList), Accu);
                  ({ function, _, Name, 0, _ }, Accu) when is_list(Suffix) ->
-                  case lists:suffix(Name, Suffix) of
+                  case lists:suffix(Suffix, atom_to_list(Name)) of
                     true ->
                       sets:add_element({ Name, 0 }, Accu);
                     false ->
