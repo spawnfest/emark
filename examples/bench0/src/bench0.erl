@@ -7,7 +7,7 @@
 -include_lib("emark/include/emark.hrl").
 
 parse_omg_wtf(X) ->
-  (X * X * X - X * X - X) / (X / 3) / (3 / X).
+  term_to_binary(math:log10(X * X * X - X * X - X)).
 
 calc_something() ->
   crypto:rand_bytes(1024).

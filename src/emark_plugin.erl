@@ -62,7 +62,10 @@ trace(B, N) ->
   Self = self(),
   spawn(fun() ->
             %% get the time it takes to run
-            { Time, _ } = timer:tc(B, [ N ]),
+            StartTime = os:timestamp(),
+            B(N),
+            EndTime = os:timestamp(),
+            Time = timer:now_diff(EndTime, StartTime),
             %% stop tracing
             erlang:trace(all, false, [ all ]),
             %% send the MFA we were benchmarking
@@ -70,8 +73,11 @@ trace(B, N) ->
               MFA = { function, { _, _, _ } } ->
                 Self ! MFA
             end,
-            %% send the time to trace_loop
-            Self ! { finished, Time }
+            %% send the time when benchmark was REALLY started
+            receive
+              { started, StartReal } ->
+                Self ! { finished, Time - timer:now_diff(StartReal, StartTime) }
+            end
         end),
   trace_loop(B, N, undefined).
 
@@ -92,7 +98,7 @@ trace_loop(B, N, MFA) ->
           Average = Time / Count,
           %% woooo.... holy crap X___x
           %% yeah, put some cool stuff here later
-          NeedCount = emark_utils:ceil((?BENCH_DEFAULT_TIME * 1.1) / Average),
+          NeedCount = emark_utils:ceil((?BENCH_DEFAULT_TIME * 1.05) / Average),
           %% restart the benchmark
           rebar_log:log(debug,
                         "restaring the benchmark with ~p iterations~n",

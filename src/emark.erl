@@ -13,6 +13,7 @@ start({ _M, _F, _A } = MFA) ->
         and (erlang:trace_pattern(MFA, true, [ local, call_count ]) > 0)),
   case Ok of
     true ->
+      self() ! { started, os:timestamp() },
       ok;
     _ ->
       throw(trace_failed)

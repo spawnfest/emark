@@ -11,10 +11,10 @@
 -define(BENCH_FUN_ARITY, 1).
 
 %% default number of iterations per function
--define(BENCH_DEFAULT_N, 10).
+-define(BENCH_DEFAULT_N, 1000).
 
-%% default benchmark time -- 1 second
--define(BENCH_DEFAULT_TIME, 1000000).
+%% default benchmark time -- 0.5 second
+-define(BENCH_DEFAULT_TIME, 500000).
 
 %% report to stdout by default
 -define(BENCH_DEFAULT_REPORT_STDOUT, true).
