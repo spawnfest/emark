@@ -170,6 +170,17 @@ perform_benchmark(Config, Modules) ->
     false -> ok
   end,
 
+  %% dump to file
+  case proplists:get_value(report_file,
+                           EmarkOpts,
+                           ?BENCH_DEFAULT_REPORT_FILE) of
+    Filename when is_list(Filename) ->
+      emark_report:to_file(EmarkResult, Filename);
+
+    false ->
+      ok
+  end,
+
   ok = file:set_cwd(Cwd),
   EmarkResult.
 

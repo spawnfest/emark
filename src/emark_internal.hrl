@@ -19,4 +19,7 @@
 %% report to stdout by default
 -define(BENCH_DEFAULT_REPORT_STDOUT, true).
 
+%% default report filename
+-define(BENCH_DEFAULT_REPORT_FILE, "report.txt").
+
 -endif. % !EMARK_INTERNAL_HRL
