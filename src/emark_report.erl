@@ -7,23 +7,29 @@
         ]).
 
 from_file(Filename) ->
-  { ok, Data } = file:read_file(Filename),
+  try
+    { ok, Data } = file:read_file(Filename),
 
-  F = fun([ Func, Arity, Count, Time ]) ->
-          { list_to_atom(Func)
-          , list_to_integer(Arity)
-          , list_to_integer(Count)
-          , list_to_float(Time)
-          }
-      end,
+    F = fun([ Func, Arity, Count, Time ]) ->
+            { list_to_atom(Func)
+              , list_to_integer(Arity)
+              , list_to_integer(Count)
+              , list_to_float(Time)
+            }
+        end,
 
-  case re:run(Data, "\([^/]+\)/([0-9]+)\t([^ \t]+)\t([^ \t]+)[^\n]+\n",
-              [ global, { capture, [ 1, 2, 3, 4 ], list }, unicode ]) of
-    { match, Keys } ->
-      lists:map(F, Keys);
+    case re:run(Data, "\([^/]+\)/([0-9]+)\t([^ \t]+)\t([^ \t]+)[^\n]+\n",
+                [ global, { capture, [ 1, 2, 3, 4 ], list }, unicode ]) of
+      { match, Keys } ->
+        lists:map(F, Keys);
 
-    nomatch ->
-      { error, invalid_report }
+      nomatch ->
+        { error, invalid_report }
+    end
+
+  catch
+    _:_ ->
+      { error, failed }
   end.
 
 to_file(Report, Filename) ->

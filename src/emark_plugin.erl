@@ -130,7 +130,7 @@ benchmark(Modules, EmarkOpts) ->
             true ->
               RunModule(M);
             false ->
-              ignore
+              [ ignore ]
           end
       end,
 
@@ -186,8 +186,12 @@ perform_benchmark(Config, Modules) ->
       emark_report:to_file(EmarkResult, Filename),
       %% dump diff
       case ShowDiff of
-        true  -> io:format("~n"), emark_report:show_diff(Previous, EmarkResult);
-        false -> ok
+        true when is_list(Previous) ->
+          io:format("~n"),
+          emark_report:show_diff(Previous, EmarkResult);
+
+        _ ->
+          ok
       end;
 
     false ->
