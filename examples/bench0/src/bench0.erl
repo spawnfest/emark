@@ -1,14 +1,29 @@
 -module(bench0).
 
 -export([ parse_omg_wtf/1
+        , calc_something/0
         ]).
 
 -include_lib("emark/include/emark.hrl").
 
 parse_omg_wtf(X) ->
-  term_to_binary((X * X * X - X * X - X) / (X / 3) / (3 / X)).
+  (X * X * X - X * X - X) / (X / 3) / (3 / X).
+
+calc_something() ->
+  crypto:rand_bytes(1024).
 
 -ifdef(BENCHMARK).
+
+calc_something_benchmark(N) ->
+  F = fun(F, 0) ->
+          ok;
+          (F, X) ->
+          _ = calc_something(),
+          F(F, X - 1)
+      end,
+
+  emark:start({ ?MODULE, calc_something, 0 }),
+  F(F, N).
 
 parse_omg_wtf_benchmark(N) ->
   Input = lists:map(fun(_) ->
