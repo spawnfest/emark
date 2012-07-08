@@ -109,8 +109,9 @@ trace_loop(B, N, MFA) ->
 
 run_func(_M, B, N) ->
   { { _Mod, Func, Arity }, Count, Time } = trace(B, N),
-  io:format("~p/~p\t~p\t~p µs/op~n",
-            [ Func, Arity, Count, trunc(Time/Count) ]).
+  io:format("~p/~p\t~p\t~.1f µs/op~n",
+            [ Func, Arity, Count, Time/Count ]),
+  { Func, Arity, Count, Time/Count }.
 
 benchmark(Modules, EmarkOpts) ->
   N = proplists:get_value(emark_n, EmarkOpts, ?BENCH_DEFAULT_N),
@@ -119,25 +120,24 @@ benchmark(Modules, EmarkOpts) ->
                   rebar_log:log(debug,
                                 "Benchmarking ~p, ~p iterations~n",
                                 [ M, N ]),
-                  lists:foreach(fun(B) ->
-                                    run_func(M, B, N)
-                                end,
-                                M:benchmark()),
-                  ok
+                  lists:map(fun(B) ->
+                                run_func(M, B, N)
+                            end,
+                            M:benchmark())
               end,
 
   F = fun(M) ->
           { module, M } = code:load_file(M),
           case erlang:function_exported(M, benchmark, 0) of
             true ->
-              RunModule(M);
+              { M, RunModule(M) };
             false ->
-              ok
+              ignore
           end
       end,
 
-  lists:foreach(F, Modules),
-  ok.
+  lists:filter(fun(R) -> R /= ignore end,
+               lists:map(F, Modules)).
 
 ebin_dir() ->
   filename:join(rebar_utils:get_cwd(), "ebin").
