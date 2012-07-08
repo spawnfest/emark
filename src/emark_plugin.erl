@@ -128,7 +128,7 @@ benchmark(Modules, EmarkOpts) ->
           { module, M } = code:load_file(M),
           case erlang:function_exported(M, benchmark, 0) of
             true ->
-              { M, RunModule(M) };
+              RunModule(M);
             false ->
               ignore
           end
