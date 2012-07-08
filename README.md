@@ -13,6 +13,7 @@ There is an example in `examples/bench0` subdirectory. You need to
 create a symbolic link to **emark**, because Spawnfest's repo is (or
 could be) private.
 
+    cd examples/bench0
     mkdir -p deps
     ln -s `pwd`/../../ deps/emark
     ../../rebar compile
